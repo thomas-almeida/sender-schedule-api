@@ -41,6 +41,14 @@ function start(client) {
     });
 }
 
+app.use((req, res, next) => {
+    if (clientInstance) {
+        next(); // Permite que a solicitação continue se o Venom estiver inicializado
+    } else {
+        res.status(500).json({ success: false, message: 'Venom client não disponível' });
+    }
+});
+
 app.post('/send-schedule', (req, res) => {
     const { message } = req.body
     const number = '5511949098312@c.us'
@@ -61,7 +69,7 @@ app.post('/send-schedule', (req, res) => {
 })
 
 app.get('/cowsay', (req, res) => {
-   res.send('Muu 🐮')
+    res.send('Muu 🐮')
 })
 
 app.listen(port, () => {
