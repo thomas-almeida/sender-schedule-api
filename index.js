@@ -41,13 +41,20 @@ function start(client) {
     });
 }
 
-app.use((req, res, next) => {
-    if (clientInstance) {
-        next(); // Permite que a solicitação continue se o Venom estiver inicializado
-    } else {
-        res.status(500).json({ success: false, message: 'Venom client não disponível' });
+async function initializeVenom() {
+    try {
+        clientInstance = await venom.create({
+            session: 'api',
+            multidevice: true,
+        });
+        start(clientInstance);
+    } catch (error) {
+        console.error(error);
     }
-});
+}
+
+initializeVenom()
+
 
 app.post('/send-schedule', (req, res) => {
     const { message } = req.body
