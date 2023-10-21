@@ -13,17 +13,34 @@ app.use(cors())
 
 let clientInstance
 
-venom
-    .create({
-        session: 'api',
-        multidevice: true
+// Função para inicializar o Venom Bot
+async function initializeVenom() {
+    try {
+        const client = await venom.create({
+            session: 'api',
+            multidevice: true
+        });
+        return client;
+    } catch (error) {
+        console.error('Erro ao inicializar o Venom Bot:', error);
+        throw error;
+    }
+}
+
+// Inicialize o Venom Bot antes de iniciar o servidor Express
+initializeVenom()
+    .then((clientInstance) => {
+        // O Venom Bot foi inicializado com sucesso, você pode usá-lo agora
+        start(clientInstance);
+
+        // Inicie o servidor Express
+        app.listen(port, () => {
+            console.log('API rodando...');
+        });
     })
-    .then((client) => {
-        clientInstance = client
-        start(client)
-    })
-    .catch((erro) => {
-        console.log(erro);
+    .catch((error) => {
+        // Manipule erros de inicialização do Venom Bot
+        console.error('Erro de inicialização:', error);
     });
 
 function start(client) {
@@ -40,21 +57,6 @@ function start(client) {
         }
     });
 }
-
-async function initializeVenom() {
-    try {
-        clientInstance = await venom.create({
-            session: 'api',
-            multidevice: true,
-        });
-        start(clientInstance);
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-initializeVenom()
-
 
 app.post('/send-schedule', (req, res) => {
     const { message } = req.body
