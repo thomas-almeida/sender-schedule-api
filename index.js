@@ -1,7 +1,7 @@
 const venom = require('venom-bot');
 const express = require('express')
 const bodyParser = require('body-parser')
-//const cors = require('cors')
+const cors = require('cors')
 
 const app = express()
 const port = 3000
@@ -9,7 +9,7 @@ const port = 3000
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(express.static('public'))
-//app.use(cors())
+app.use(cors())
 
 let clientInstance
 
@@ -17,7 +17,7 @@ let clientInstance
 async function initializeVenom() {
     try {
         const client = await venom.create({
-            session: 'api',
+            session: 'api-test',
             multidevice: true
         });
         return client;
